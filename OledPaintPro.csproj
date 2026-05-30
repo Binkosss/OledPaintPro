@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWpf>true</UseWpf>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>OledPaintPro</AssemblyName>
+    <RootNamespace>OledPaintPro</RootNamespace>
+  </PropertyGroup>
+
+  <!-- ?? Podpisywanie self-signed (dev) ??????????????????????????????????????? -->
+  <PropertyGroup>
+    <DevCertPfx>$(MSBuildProjectDirectory)\certs\dev-cert.pfx</DevCertPfx>
+    <DevCertPasswordFile>$(MSBuildProjectDirectory)\certs\cert-password.txt</DevCertPasswordFile>
+    <SignScript>$(MSBuildProjectDirectory)\certs\Sign-Build.ps1</SignScript>
+  </PropertyGroup>
+
+  <Target Name="SignWithDevCert" AfterTargets="Build"
+          Condition="Exists('$(DevCertPfx)') AND Exists('$(DevCertPasswordFile)') AND Exists('$(SignScript)')">
+    <PropertyGroup>
+      <_ExeToSign>$(MSBuildProjectDirectory)\$(OutputPath)$(AssemblyName).exe</_ExeToSign>
+    </PropertyGroup>
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SignScript)&quot; -ExePath &quot;$(_ExeToSign)&quot; -PfxPath &quot;$(DevCertPfx)&quot; -Password &quot;$([System.IO.File]::ReadAllText('$(DevCertPasswordFile)').Trim())&quot;"
+          ConsoleToMSBuild="true"
+          IgnoreExitCode="false" />
+  </Target>
+  <!-- ??????????????????????????????????????????????????????????????????????? -->
+
+</Project>

@@ -1,0 +1,201 @@
+<UserControl x:Class="OledPaintPro.AnimationEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#141414">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Toolbar animacji -->
+            <RowDefinition Height="*"/>      <!-- Filmstrip + edytor -->
+            <RowDefinition Height="Auto"/>   <!-- Pasek statusu -->
+        </Grid.RowDefinitions>
+
+        <!-- ══ TOOLBAR ANIMACJI ══════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="#1A1A1A" BorderBrush="#2A2A2A" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="8,4">
+
+                <!-- Nowa klatka -->
+                <Button x:Name="AddFrameBtn" Click="AddFrame_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,4,0" ToolTip="Dodaj klatkę (Ins)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="＋" Margin="0,-1,4,0" FontSize="14" Foreground="#55DDAA"/>
+                        <TextBlock Text="Klatka" Foreground="#55DDAA"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Duplikuj -->
+                <Button x:Name="DupFrameBtn" Click="DupFrame_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,4,0" ToolTip="Duplikuj klatkę (Ctrl+D)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⧉" Margin="0,0,4,0" Foreground="#88BBFF"/>
+                        <TextBlock Text="Duplikuj" Foreground="#88BBFF"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Usuń -->
+                <Button x:Name="DelFrameBtn" Click="DelFrame_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,10,0" ToolTip="Usuń klatkę (Del)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✕" Margin="0,0,4,0" Foreground="#FF6666"/>
+                        <TextBlock Text="Usuń" Foreground="#FF6666"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Separator -->
+                <Border Width="1" Background="#333" Margin="0,4,10,4"/>
+
+                <!-- Strzałki porządku klatek -->
+                <Button x:Name="MoveLeftBtn" Click="MoveLeft_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,2,0" ToolTip="Przesuń klatkę w lewo">
+                    <TextBlock Text="◀" Foreground="#888"/>
+                </Button>
+                <Button x:Name="MoveRightBtn" Click="MoveRight_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,10,0" ToolTip="Przesuń klatkę w prawo">
+                    <TextBlock Text="▶" Foreground="#888"/>
+                </Button>
+
+                <!-- Separator -->
+                <Border Width="1" Background="#333" Margin="0,4,10,4"/>
+
+                <!-- PLAY -->
+                <Button x:Name="PlayBtn" Click="Play_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,2,0" ToolTip="Odtwórz (Spacja)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="PlayIcon" Text="▶" Margin="0,0,4,0" Foreground="#44FF88"/>
+                        <TextBlock x:Name="PlayLabel" Text="Play" Foreground="#44FF88"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Loop -->
+                <Button x:Name="LoopBtn" Click="Loop_Click"
+                        Style="{StaticResource HdrBtn}" Margin="0,0,10,0" ToolTip="Pętla">
+                    <TextBlock x:Name="LoopIcon" Text="🔁" FontSize="11"/>
+                </Button>
+
+                <!-- FPS -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <TextBlock Text="FPS:" Foreground="#666" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <Slider x:Name="FpsSlider" Minimum="1" Maximum="60" Value="10"
+                            Width="90" VerticalAlignment="Center"
+                            ValueChanged="FpsSlider_ValueChanged"
+                            Background="Transparent"/>
+                    <Border Background="#111" BorderBrush="#333" BorderThickness="1" CornerRadius="3"
+                            Padding="5,2" Margin="6,0,0,0">
+                        <TextBlock x:Name="FpsLabel" Text="10" Foreground="#AAFFCC"
+                                   FontFamily="Consolas" FontSize="11" Width="22" TextAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Separator -->
+                <Border Width="1" Background="#333" Margin="0,4,10,4"/>
+
+                <!-- OLED Live Preview -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                    <TextBlock Text="Podgląd OLED:" Foreground="#666" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Border x:Name="OledPreviewBorder" Background="#000"
+                            BorderBrush="#2277FF" BorderThickness="1" CornerRadius="3"
+                            Padding="2">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#2277FF" BlurRadius="8" ShadowDepth="0" Opacity="0.5"/>
+                        </Border.Effect>
+                        <Image x:Name="OledPreviewImage"
+                               Width="128" Height="64"
+                               Stretch="Fill"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Separator -->
+                <Border Width="1" Background="#333" Margin="0,4,10,4"/>
+
+                <!-- Eksport -->
+                <Button x:Name="ExportBtn" Click="Export_Click"
+                        Style="{StaticResource HdrBtn}" ToolTip="Eksportuj animację jako .h (ESP32)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="💾" Margin="0,0,4,0" FontSize="11"/>
+                        <TextBlock Text="Eksport .h" Foreground="#FFB84D"/>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+        </Border>
+
+        <!-- ══ GŁÓWNY OBSZAR: filmstrip + edytor ════════════════════════════ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>      <!-- Filmstrip -->
+                <ColumnDefinition Width="3"/>        <!-- Splitter -->
+                <ColumnDefinition Width="*"/>        <!-- Edytor klatki -->
+            </Grid.ColumnDefinitions>
+
+            <!-- ── FILMSTRIP ──────────────────────────────────────────────── -->
+            <Border Grid.Column="0" Background="#121212" BorderBrush="#2A2A2A" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Background="#1A1A1A" BorderBrush="#2A2A2A" BorderThickness="0,0,0,1" Padding="8,5">
+                        <TextBlock x:Name="FrameCountLabel" Text="Klatki: 1"
+                                   Foreground="#555" FontFamily="Consolas" FontSize="10"/>
+                    </Border>
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="FilmstripPanel" Orientation="Vertical" Margin="6,6,6,6"/>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- GridSplitter -->
+            <GridSplitter Grid.Column="1" Width="3" Background="#222"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+            <!-- ── EDYTOR KLATKI ───────────────────────────────────────────── -->
+            <Border Grid.Column="2" x:Name="EditorContainer" Background="#141414"/>
+
+            <!-- ── PODGLĄD ODTWARZANIA (nakładka widoczna tylko podczas Play) ─ -->
+            <Border Grid.Column="2" x:Name="AnimPlayPreviewBorder"
+                    Background="#141414" Visibility="Collapsed"
+                    Panel.ZIndex="10">
+                <Grid>
+                    <Border Background="#1C1C1C">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto"
+                                      Background="#1C1C1C">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                                <Border BorderBrush="#0B0E45" BorderThickness="4"
+                                        CornerRadius="6" Background="#000000">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#101363" BlurRadius="16" ShadowDepth="0" Opacity="0.4"/>
+                                    </Border.Effect>
+                                    <Image x:Name="AnimPlayImage"
+                                           Stretch="None"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                    <!-- Overlay: napis PLAY -->
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="12" Background="#CC000000" CornerRadius="4" Padding="8,4"
+                            IsHitTestVisible="False">
+                        <TextBlock Text="▶ PLAY" Foreground="#44FF88"
+                                   FontFamily="Consolas" FontSize="11"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ══ PASEK STATUSU ANIMACJI ════════════════════════════════════════ -->
+        <Border Grid.Row="2" Background="#111" BorderBrush="#2A2A2A" BorderThickness="0,1,0,0" Padding="10,3">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="AnimStatusLabel" Text="Klatka 1/1"
+                           Foreground="#44FF88" FontFamily="Consolas" FontSize="10"
+                           VerticalAlignment="Center" Margin="0,0,20,0"/>
+                <TextBlock x:Name="AnimSizeLabel" Text=""
+                           Foreground="#555" FontFamily="Consolas" FontSize="10"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
