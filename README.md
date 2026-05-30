@@ -49,7 +49,7 @@ Przy budowie tej aplikacji ogromnie pomógł mi **GitHub Copilot** — dosłowni
 
 ## 🙏 Podziękowania / Third-party credits
 
-Część predefiniowanych bitmap (wzory oczu, ust i innych elementów) pochodzi z projektu
+Część predefiniowanych bitmap pochodzi z projektu
 **[Lopaka](https://github.com/sbrin/lopaka)** autorstwa [@sbrin](https://github.com/sbrin)
 i współtwórców, udostępnionego na licencji **Apache License 2.0**.
 

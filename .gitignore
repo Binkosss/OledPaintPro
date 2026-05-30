@@ -6,3 +6,7 @@ obj/
 # Certyfikaty deweloperskie (self-signed) — nie commituj do repo
 certs/dev-cert.pfx
 certs/cert-password.txt
+
+# Pliki kontekstu Copilota i planów
+PLANS.md
+COPILOT_CONTEXT.md
